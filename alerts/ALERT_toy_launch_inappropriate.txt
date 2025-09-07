@@ -1,0 +1,7 @@
+Subject: Campaign "toy launch inappropriate" Flagged: Insufficient Assets
+
+Hi Team,
+
+The "toy launch inappropriate" campaign has been flagged with a warning due to insufficient assets.  The campaign requires 3 variants, but none have been generated.  The campaign is related to "the perfect warrior toy" product, specifically the "toy figure".
+
+Please review the campaign log at 'logs/toy_launch_inappropriate.log' for potential errors and take corrective action.

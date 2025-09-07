@@ -1,0 +1,28 @@
+Campaign Generation Log
+-------------------------
+Campaign Name: toy launch inappropriate
+Timestamp (UTC): 2025-09-07T20:48:27.645296
+Status: FLAGGED INSUFFICIENT ASSETS
+
+Metrics:
+  - Expected Creatives: 3
+  - Generated Creatives: 0
+
+Brief Details:
+{
+  "campaign_name": "toy launch inappropriate",
+  "region": "North America",
+  "audience": "children",
+  "message": "the perfect warrior toy ",
+  "brand_colors": [
+    "Blue",
+    "White"
+  ],
+  "products": {
+    "toy figure ": {
+      "description": "naked ninja "
+    }
+  }
+}
+
+Generated File URLs:

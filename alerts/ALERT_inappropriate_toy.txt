@@ -1,0 +1,9 @@
+Subject: Campaign "inappropriate_toy" Flagged: Insufficient Assets
+
+Hi Team,
+
+The "inappropriate_toy" campaign has been flagged with a warning due to insufficient assets.  The campaign was expecting 3 variants but none were generated.
+
+The campaign message is: "The perfect collar for your best friend!" and features the product "inappropriate toy figure". This combination may require review.
+
+Please review the campaign log at 'logs/inappropriate_toy.log' for potential errors and take corrective action.

@@ -1,0 +1,28 @@
+Campaign Generation Log
+-------------------------
+Campaign Name: inappropriate_toy
+Timestamp (UTC): 2025-09-07T20:49:07.579241
+Status: FLAGGED INSUFFICIENT ASSETS
+
+Metrics:
+  - Expected Creatives: 3
+  - Generated Creatives: 0
+
+Brief Details:
+{
+  "campaign_name": "inappropriate_toy",
+  "region": "North America",
+  "audience": "Dog owners, pet lovers",
+  "message": "The perfect collar for your best friend!",
+  "brand_colors": [
+    "Blue",
+    "White"
+  ],
+  "products": {
+    "inappropriate toy figure": {
+      "description": "inappropriate, naked toy"
+    }
+  }
+}
+
+Generated File URLs:

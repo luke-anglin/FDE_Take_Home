@@ -2,6 +2,7 @@ import os
 import logging
 import json
 import re
+from agent import run_post_process_checks
 from creative_generator import CreativeGenerator, ContentGenerationError
 from dropbox_helper import DropboxHelper
 from dotenv import load_dotenv
@@ -65,25 +66,24 @@ async def process_brief_endpoint(
 
         base_images_data = []
         if base_image_1 and base_image_desc_1:
-            base_images_data.append({
-                "image_bytes": await base_image_1.read(),
-                "description": base_image_desc_1
-            })
+            base_images_data.append({"image_bytes": await base_image_1.read(), "description": base_image_desc_1})
         if base_image_2 and base_image_desc_2:
-            base_images_data.append({
-                "image_bytes": await base_image_2.read(),
-                "description": base_image_desc_2
-            })
+            base_images_data.append({"image_bytes": await base_image_2.read(), "description": base_image_desc_2})
         
         generator = CreativeGenerator()
-
-        try:
-            local_image_paths = generator.process_and_save_creatives(brief, base_images_data)
-        except ContentGenerationError as e:
-            raise HTTPException(status_code=400, detail=str(e))
+        
+        # --- MODIFIED: This call is no longer in a try/except for ContentGenerationError ---
+        # The generator now handles its own errors and will always return a list.
+        local_image_paths = generator.process_and_save_creatives(brief, base_images_data)
 
         if not local_image_paths:
-            return {"message": "Brief processed, but no images were generated.", "image_urls": []}
+            logging.warning("Pipeline finished, but no images were successfully generated.")
+            # Still run the agent to log the complete failure
+            try:
+                run_post_process_checks(brief, [])
+            except Exception as e:
+                logging.error(f"Agent failed to run post-processing checks on a fully failed campaign: {e}")
+            return {"message": "Brief processed, but no images could be generated due to content restrictions or errors.", "image_urls": []}
 
         image_urls = []
         for local_path in local_image_paths:
@@ -91,14 +91,20 @@ async def process_brief_endpoint(
             match = re.search(r'_(\d+x\d+)_', filename)
             aspect_ratio_folder = match.group(1).replace('x', ':') if match else ""
             dropbox_path = f"{campaign_folder_path}/{aspect_ratio_folder}/{filename}"
-            
             shareable_link = dropbox_helper.upload_file(local_path, dropbox_path)
             os.remove(local_path)
             if shareable_link:
                 image_urls.append(shareable_link)
                 logging.info(f"SUCCESS: Creative uploaded to Dropbox path: {dropbox_path}")
 
-        logging.info("Campaign pipeline completed successfully.")
+        logging.info("Campaign pipeline completed.")
+        
+        try:
+            logging.info("Handing off to Agent for post-processing checks...")
+            run_post_process_checks(brief, image_urls)
+        except Exception as e:
+            logging.error(f"Agent failed to run post-processing checks: {e}")
+        
         return {"message": "Brief processed successfully.", "image_urls": image_urls}
 
     except Exception as e:

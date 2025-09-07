@@ -1,0 +1,31 @@
+Campaign Generation Log
+-------------------------
+Campaign Name: toy launch
+Timestamp (UTC): 2025-09-07T20:42:59.395769
+Status: SUCCESS
+
+Metrics:
+  - Expected Creatives: 3
+  - Generated Creatives: 3
+
+Brief Details:
+{
+  "campaign_name": "toy launch",
+  "region": "North America",
+  "audience": "children",
+  "message": "the perfect warrior toy ",
+  "brand_colors": [
+    "Blue",
+    "White"
+  ],
+  "products": {
+    "toy figure ": {
+      "description": "a toy figure in a ninja suit juggling knives "
+    }
+  }
+}
+
+Generated File URLs:
+  - https://www.dropbox.com/scl/fi/2jrnsrh6i4bpa6pxohfa2/toy_launch_toy_figure__1x1_4904df79.png?rlkey=5fnpb59jcqwre2tvbw9zmhgkh&raw=1
+  - https://www.dropbox.com/scl/fi/h0mekak89azovma32qxda/toy_launch_toy_figure__9x16_283d631f.png?rlkey=50jpo8zchrgem7c1uqs0wcg29&raw=1
+  - https://www.dropbox.com/scl/fi/tzw5y9hk0f09oez67o8jc/toy_launch_toy_figure__16x9_0c6b67d7.png?rlkey=omnaz2hsqzzm5mypovrxdh772&raw=1
