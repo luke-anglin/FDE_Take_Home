@@ -92,3 +92,106 @@ You will need:
     * Click "Submit" at the bottom of the page.
     * Go back to the "Settings" tab.
     * Under the "OAuth 2" section, find the "Redirect URIs" field. Add http://localhost:8000 and click the "Add" button.
+    * On the "Settings" tab, you will see your App key and App secret.
+    * Copy these values into your .env file for DROPBOX_APP_KEY and DROPBOX_APP_SECRET.
+    * Run `python dropbox_helper.py` and follow the steps to have your token in `.env` replaced.
+    * Your browser will open to a Dropbox authorization page. Click "Allow".
+    * You will be redirected to a "Site not found" page at localhost:8000. This is expected and correct.
+    * Copy the code value from the URL in your browser's address bar.
+    * Paste this code back into your terminal and press Enter.
+
+Your `.env` file should now be complete.
+
+# How to Run 
+
+```bash
+python -m uvicorn main:app --reload
+```
+
+## Project Structure 
+
+```
+.
+├── creative_generator.py     # Handles all Gemini AI logic and image generation.
+├── dropbox_helper.py         # Manages Dropbox API connection, uploads, and authentication.
+├── delete_dropbox_files.py   # Utility script to clean the Dropbox folder.
+├── main.py                   # The main FastAPI application server.
+├── requirements.txt          # Python dependencies.
+├── .env                      # Your secret API keys and configuration.
+├── frontend/
+│   ├── index.html            # The main campaign brief form.
+│   ├── script.js             # JavaScript for the main form.
+│   ├── gallery.html          # The campaign gallery page.
+│   ├── gallery.js            # JavaScript for the gallery page.
+│   └── styles.css            # Shared CSS for both pages.
+└── temp_outputs/             # A temporary local folder for generated images before upload.
+```
+
+# How the Creative Automation Pipeline Works
+
+This document provides a high-level overview of the application's architecture, data flow, and the core concepts behind its operation.
+
+## High-Level Overview
+
+The application is built on a modern client-server architecture. A user interacts with a web-based **Frontend**, which communicates with a **Backend** server. The backend serves as an orchestrator, taking the user's creative brief and managing a complex workflow involving a powerful external **AI Generation Service** (Google Gemini) and a **Cloud Storage Service** (Dropbox).
+
+The core principle of this pipeline is **delegation**. Instead of performing manual steps like overlaying text or checking for brand colors in our own code, we engineer a highly specific, multimodal prompt that instructs the AI to perform all these creative tasks in a single step, resulting in a cleaner workflow and more sophisticated output.
+
+---
+
+## The Core Components
+
+-   **1. The Frontend (Web UI):** Built with HTML, CSS (Bulma), and vanilla JavaScript, this is the user's entry point. Its primary responsibilities are to present a clear and intuitive form for the campaign brief, package all the user's input (text, images, descriptions), send it to the backend, and elegantly display the final generated assets or any errors.
+
+-   **2. The Backend (FastAPI Server):** A Python server that acts as the brain of the operation. It exposes API endpoints that the frontend can call. Its responsibilities are to receive and validate user requests, manage the step-by-step generation process, handle authentication with external services, and organize the final assets for storage.
+
+-   **3. The AI Generation Service (Creative Generator):** A specialized Python class that is responsible for all communication with the Google Gemini model. It takes the raw brief from the backend and performs the critical task of "prompt engineering"—translating the business requirements into a detailed, multimodal set of instructions that the AI can understand and execute.
+
+-   **4. The Cloud Storage Service (Dropbox Helper):** A dedicated Python class for all interactions with the Dropbox API. It handles the complexities of OAuth 2.0 authentication (using a permanent refresh token), checks for existing folders, uploads the final image assets into a structured folder system, and generates the shareable links needed by the frontend.
+
+---
+
+## The Journey of a Request: A Step-by-Step Flow
+
+This is the end-to-end journey of a user's request to generate new ad creatives, broken down into five phases.
+
+### Phase 1: The User's Action (Frontend)
+
+1.  **Briefing:** The user fills out the comprehensive form on the main webpage, providing all campaign details, product information, and optional base images with their required descriptions.
+2.  **Submission:** The user clicks the "Generate & Upload" button.
+3.  **Packaging:** The browser's JavaScript gathers all the text fields and image files into a single package (**FormData**) ready to be sent to the server.
+
+### Phase 2: The Server's Initial Role (Backend)
+
+4.  **API Call:** The frontend sends all the data to the backend's **/process-brief** API endpoint.
+5.  **Validation:** The server receives the data and immediately checks with Dropbox to ensure the campaign name is unique. If a campaign with that name already exists, it sends an error back to the user.
+6.  **Delegation:** Assuming the campaign is new, the server passes the entire brief (all text and image data) to the Creative Generator module to begin the core work.
+
+### Phase 3: The Creative Core (AI Generation)
+
+7.  **Prompt Engineering:** For each creative to be generated (for every product and every aspect ratio), the Creative Generator constructs a highly detailed, multimodal prompt. This is the "secret sauce" of the application, instructing the AI on exactly what to do.
+8.  **AI Communication:** The generator sends a complete package to the Google Gemini API. This package includes the text prompt, any user-uploaded images, and a crucial blank placeholder image correctly sized for the desired aspect ratio.
+9.  **Image Creation:** The Gemini model processes all inputs and generates a single, finished creative asset that includes the overlaid text, brand colors, and correct dimensions. It sends this image back to our server as data.
+
+### Phase 4: Finalization and Storage (Backend)
+
+10. **File Handling:** The backend receives the generated image data, saves it as a temporary file, and then immediately uploads it to the correct, structured folder on Dropbox (e.g., **/Summer_Campaign/9:16/**).
+11. **Link Creation:** After each successful upload, the backend requests a permanent, shareable link from Dropbox for the newly uploaded file.
+12. **Response:** Once all images are generated and uploaded, the backend gathers all the shareable links into a list.
+
+### Phase 5: Displaying the Result (Frontend)
+
+13. **Success:** The backend sends the list of image links back to the user's browser in a final success message.
+14. **Display:** The JavaScript on the main page receives this list and dynamically builds the image cards, allowing the user to see and download their new creatives instantly.
+
+---
+
+## The Campaign Gallery Flow
+
+The process for viewing past campaigns is simpler but follows a similar pattern:
+
+1.  **User Navigates:** The user clicks the "View All Campaigns" button, which opens the **gallery.html** page.
+2.  **Frontend Requests Data:** The gallery's JavaScript immediately sends a request to the backend's **/list-campaigns** API endpoint.
+3.  **Backend Queries Dropbox:** The backend uses the **Dropbox Helper** to recursively scan the entire Dropbox app folder. It finds all files, organizes them by their parent campaign folder, and gets a shareable link for each one.
+4.  **Backend Responds:** The backend sends the organized data—a JSON object where keys are campaign names and values are lists of their image assets—back to the frontend.
+5.  **Frontend Renders Gallery:** The JavaScript receives the data and dynamically builds the gallery page, creating a new section for each campaign and filling it with the corresponding image cards.
