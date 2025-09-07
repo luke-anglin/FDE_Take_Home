@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Campaign Gallery</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container box">
+            <div class="is-flex is-justify-content-space-between is-align-items-center">
+                <!-- MODIFIED: Removed the color class to allow styles.css to take over -->
+                <h1 class="title is-2">Campaign Gallery</h1>
+                <a href="/" class="button is-link is-light">
+                    <span class="icon"><i class="fas fa-arrow-left"></i></span>
+                    <span>Back to Generator</span>
+                </a>
+            </div>
+            <p class="subtitle is-5 has-text-grey">Browse all previously generated campaigns and assets.</p>
+            <hr>
+            <div id="gallery-container">
+                <p id="loading-message" class="has-text-centered">
+                    <span class="icon is-large"><i class="fas fa-spinner fa-pulse"></i></span>
+                    <span class="is-size-4">Loading campaigns from Dropbox...</span>
+                </p>
+            </div>
+        </div>
+    </section>
+    <script src="gallery.js"></script>
+</body>
+</html>

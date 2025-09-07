@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Creative Automation Pipeline</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <section class="section">
+        <div class="container box">
+            <h1 class="title is-2">Creative Automation Pipeline</h1>
+            <h2 class="subtitle is-5">Generate and upload creative assets to Dropbox.</h2>
+
+            <div class="is-flex is-justify-content-flex-end mb-5">
+                <!-- MODIFIED: Added 'is-light' class for consistent button styling -->
+                <a href="/gallery.html" class="button is-link is-light">
+                    <span>View All Campaigns</span>
+                    <span class="icon"><i class="fas fa-images"></i></span>
+                </a>
+            </div>
+
+            <form id="brief-form">
+                <h3 class="title is-4 mt-5">Campaign Details</h3>
+                <div class="field"><label class="label" for="campaign-name">Campaign Name</label><div class="control"><input class="input" type="text" id="campaign-name" required></div></div>
+                <div class="field"><label class="label" for="region">Target Region</label><div class="control"><input class="input" type="text" id="region" required></div></div>
+                <div class="field"><label class="label" for="audience">Target Audience</label><div class="control"><input class="input" type="text" id="audience" required></div></div>
+                <div class="field"><label class="label" for="message">Ad Message</label><div class="control"><textarea class="textarea" id="message" required></textarea></div></div>
+                <div class="field"><label class="label" for="brand-colors">Brand Colors</label><div class="tags-container" id="tags-container"><input class="tag-input" type="text" id="brand-colors" placeholder="e.g., Blue, Red, White"></div></div>
+
+                <h3 class="title is-4 mt-5">Base Images (Optional)</h3>
+                <p class="help mb-4"><em>Upload a product image and an optional logo. A description of each image and its purpose is required.</em></p>
+
+                <div id="base-image-container-1" class="box has-background-light p-4 mb-4">
+                    <div class="field">
+                        <label class="label">Base Image 1</label>
+                        <div id="file-uploader-1" class="file has-name is-fullwidth">
+                            <label class="file-label">
+                                <input class="file-input" type="file" id="base-image-file-1" accept="image/*">
+                                <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">Choose a file…</span></span>
+                                <span class="file-name" id="file-name-1">No file selected</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Image 1 Description</label>
+                        <div class="control">
+                            <input class="input" type="text" id="base-image-desc-1" placeholder="e.g., 'Main product shot of the dog collar'">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="buttons is-centered" id="add-image-button-container">
+                    <button class="button is-link is-light" type="button" id="add-image-btn">
+                        <span class="icon"><i class="fas fa-plus"></i></span>
+                        <span>Add Another Image (e.g., Logo)</span>
+                    </button>
+                </div>
+
+                <div id="base-image-container-2" class="box has-background-light p-4" style="display: none;">
+                    <div class="field">
+                        <label class="label">Base Image 2</label>
+                         <div id="file-uploader-2" class="file has-name is-fullwidth">
+                            <label class="file-label">
+                                <input class="file-input" type="file" id="base-image-file-2" accept="image/*">
+                                <span class="file-cta"><span class="file-icon"><i class="fas fa-upload"></i></span><span class="file-label">Choose a file…</span></span>
+                                <span class="file-name" id="file-name-2">No file selected</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="field">
+                        <label class="label">Image 2 Description</label>
+                        <div class="control">
+                            <input class="input" type="text" id="base-image-desc-2" placeholder="e.g., 'Company logo to place in the top right corner'">
+                        </div>
+                    </div>
+                </div>
+
+                <h3 class="title is-4 mt-5">Products</h3><hr class="mt-0">
+                <div id="products-container"></div>
+                <div class="buttons is-centered"><button class="button is-link is-light" type="button" id="add-product-btn">Add Another Product</button></div>
+                <div class="field is-grouped is-grouped-centered mt-6"><div class="control"><button class="button is-primary is-large" type="submit" id="submit-btn">Generate & Upload<span class="icon is-small is-right is-hidden" id="loading-spinner"><i class="fas fa-spinner fa-pulse"></i></span></button></div></div>
+            </form>
+
+            <div id="notification-container" class="my-4"></div>
+            <h3 class="title is-4 has-text-centered mt-6">Generated Assets</h3>
+            <div id="image-gallery" class="image-gallery"></div>
+        </div>
+    </section>
+
+    <script src="script.js"></script>
+</body>
+</html>

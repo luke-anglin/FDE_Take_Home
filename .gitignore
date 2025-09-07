@@ -1,0 +1,6 @@
+env/
+*.pdf
+*.csv
+*.png
+*_sample.txt
+.env

@@ -1,0 +1,36 @@
+/* --- THIS IS THE MAIN FIX --- */
+/* The selector is now a class (.) instead of an ID (#), so it works on both pages */
+.image-gallery {
+    margin-top: 2rem;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+/* The rest of the file remains the same, but is included for completeness */
+body { background-color: #f8f9fa; color: #343a40; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"; }
+.container { margin-top: 2rem; max-width: 900px; }
+.box { background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08); padding: 2.5rem; }
+.title, .subtitle { color: #007bff; text-align: center; font-weight: 600; }
+.label { color: #495057; }
+.input, .textarea { background-color: #f1f3f5; border: 1px solid #ced4da; color: #343a40; border-radius: 4px; }
+.input:focus, .textarea:focus { border-color: #007bff; box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25); outline: none; }
+.button.is-primary { background-color: #007bff; border-color: #007bff; color: #ffffff; font-weight: 500; transition: all 0.2s ease-in-out; }
+.button.is-primary:hover { background-color: #0056b3; border-color: #0056b3; transform: translateY(-1px); }
+.button.is-link.is-light { background-color: #e9ecef; color: #007bff; border-color: transparent; }
+.button.is-link.is-light:hover { background-color: #dae0e5; color: #0056b3; }
+.card { border: 1px solid #dee2e6; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; }
+.card-image { position: relative; width: 100%; height: auto; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+.card-image img { display: block; width: 100%; height: auto; object-fit: contain; }
+.card-header { text-align: center; padding: 0.5rem; background-color: #e9ecef; border-bottom: 1px solid #dee2e6; }
+.card-header-title { color: #007bff; font-weight: 600; font-size: 0.9rem; }
+.tags-container { border: 1px solid #ced4da; background-color: #f1f3f5; min-height: 40px; padding: 6px; border-radius: 4px; display: flex; flex-wrap: wrap; align-items: center; }
+.tag-input { background: none; border: none; outline: none; flex-grow: 1; padding: 0 4px; }
+.tag { background-color: #e9ecef; color: #495057; font-weight: 500; margin: 4px; padding: 4px 8px; border-radius: 4px; display: flex; align-items: center; }
+.tag .delete { margin-left: 8px; background-color: transparent; color: #495057; opacity: 0.7; }
+.tag .delete:hover { opacity: 1; background-color: transparent; color: #dc3545; }
+.notification.is-success { background-color: #d4edda; color: #155724; border-color: #c3e6cb; }
+.notification.is-danger { background-color: #f8d7da; color: #721c24; border-color: #f5c6cb; }
+.download-button { border-radius: 0 0 8px 8px; border: none; font-weight: 600; }
+.download-button:hover { transform: scale(1.02); z-index: 10; }
+.is-divider { border-top: 1px solid #e0e0e0; height: 1px; margin: 1rem 0; }
