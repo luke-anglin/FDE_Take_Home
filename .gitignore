@@ -4,3 +4,7 @@ env/
 *.png
 *_sample.txt
 .env
+alerts/*
+logs/*
+temp_outputs/
+*.mov

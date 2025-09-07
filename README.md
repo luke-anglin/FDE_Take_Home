@@ -1,3 +1,23 @@
+# Table of Contents
+
+- [Creative Automation Pipeline for Social Campaigns](#creative-automation-pipeline-for-social-campaigns)
+    - [Features](#features)
+    - [Tech Stack](#tech-stack)
+    - [Setup and Installation](#setup-and-installation)
+        - [1. Prerequisites](#1-prerequisites)
+        - [2. Clone the Repository](#2-clone-the-repository)
+        - [3. Setup a Virtual Environment](#3-setup-a-virtual-environment)
+        - [4. Install Dependencies](#4-install-dependencies)
+        - [5. Configure Environment](#5-configure-environment)
+    - [How to Run](#how-to-run)
+    - [Project Structure](#project-structure)
+    - [How the Creative Automation Pipeline Works](#how-the-creative-automation-pipeline-works)
+        - [High-Level Overview](#high-level-overview)
+        - [The Core Components](#the-core-components)
+        - [The Journey of a Request: A Step-by-Step Flow](#the-journey-of-a-request-a-step-by-step-flow)
+        - [The Campaign Gallery Flow](#the-campaign-gallery-flow)
+        - [The AI-Powered Monitoring Agent](#the-ai-powered-monitoring-agent)
+
 # Creative Automation Pipeline for Social Campaigns
 
 This project is a full-stack proof-of-concept for a creative automation pipeline. It allows a user to fill out a detailed campaign brief via a web interface, which then uses Google's Gemini Pro AI to generate multiple ad creatives based on the brief. The final assets are automatically uploaded to a structured folder system in Dropbox, and a gallery is available to view all past campaigns.
@@ -110,21 +130,29 @@ python -m uvicorn main:app --reload
 
 ## Project Structure 
 
-```
+Important files/directories listed below:
+
+```bash
 .
-├── creative_generator.py     # Handles all Gemini AI logic and image generation.
-├── dropbox_helper.py         # Manages Dropbox API connection, uploads, and authentication.
-├── delete_dropbox_files.py   # Utility script to clean the Dropbox folder.
-├── main.py                   # The main FastAPI application server.
-├── requirements.txt          # Python dependencies.
-├── .env                      # Your secret API keys and configuration.
-├── frontend/
-│   ├── index.html            # The main campaign brief form.
-│   ├── script.js             # JavaScript for the main form.
-│   ├── gallery.html          # The campaign gallery page.
-│   ├── gallery.js            # JavaScript for the gallery page.
-│   └── styles.css            # Shared CSS for both pages.
-└── temp_outputs/             # A temporary local folder for generated images before upload.
+├── agent.py # logic for the alerts AI agent
+├── alerts # generated alerts 
+│   ├── <generated alerts here>
+├── creative_generator.py # pipeline code for generating graphics
+├── dropbox_helper.py # connects to dropbox API/manages storage 
+├── frontend # Web UI
+│   ├── gallery.html
+│   ├── gallery.js
+│   ├── index.html
+│   ├── script.js
+│   └── styles.css
+├── logs 
+│   ├── <generated logs here>
+├── main.py # fastAPI 
+├── README.md
+
+10 directories, 23 files
+
+
 ```
 
 # How the Creative Automation Pipeline Works
@@ -195,3 +223,39 @@ The process for viewing past campaigns is simpler but follows a similar pattern:
 3.  **Backend Queries Dropbox:** The backend uses the **Dropbox Helper** to recursively scan the entire Dropbox app folder. It finds all files, organizes them by their parent campaign folder, and gets a shareable link for each one.
 4.  **Backend Responds:** The backend sends the organized data—a JSON object where keys are campaign names and values are lists of their image assets—back to the frontend.
 5.  **Frontend Renders Gallery:** The JavaScript receives the data and dynamically builds the gallery page, creating a new section for each campaign and filling it with the corresponding image cards.
+
+---
+
+## The AI-Powered Monitoring Agent
+
+To provide intelligent oversight and quality control for the pipeline, the system includes a lightweight, AI-driven monitoring agent. It is designed to be database-free, using a simple and transparent file-based logging system.
+
+### Purpose
+
+The agent's primary role is to automatically audit the outcome of every campaign generation task. It ensures that the pipeline is performing as expected and creates clear, human-readable alerts when it detects a problem, such as a partial failure in generating creatives.
+
+### How It Works
+
+The agent's workflow is triggered automatically after every campaign is processed:
+
+1.  **Audit & Log:** Immediately after a campaign's assets are uploaded, the agent runs. It creates a permanent, detailed log file for the campaign in the **`/logs`** directory. This log records the full brief, the final status (e.g., `SUCCESS` or `FLAGGED`), and the metrics (e.g., `Expected: 6, Generated: 3`).
+
+2.  **Detect Issues:** The agent's core logic compares the number of expected assets against the number that were actually generated and uploaded.
+
+3.  **Trigger AI Alert:** If a discrepancy is found, the agent triggers its alert mechanism.
+
+### The Role of the Gemini AI
+
+The agent's logic is written in Python; the **Gemini AI acts as its specialized communication tool**.
+
+-   The Python agent detects the problem and compiles the cold, hard facts into a structured JSON object (this is the "Model Context Protocol").
+-   This JSON object is then passed to the Gemini text model with a specific prompt: "You are a production assistant. Translate this data into a clear email alert."
+-   The AI's sole task is to translate this structured data into a well-written, human-readable message.
+
+This creates a powerful division of labor: **the Python agent handles the logic, and the AI handles the nuanced communication**. The final alert is saved as a `.txt` file in the **`/alerts`** directory.
+
+### How to See it in Action
+
+-   **On a successful run,** a new file will appear in the **`/logs`** directory with a `SUCCESS` status.
+-   **To test the alerting,** submit a brief with content designed to be blocked by safety filters (e.g., a product description depicting a dangerous act). This will cause a partial failure.
+-   The agent will then create a `FLAGGED` log in **`/logs`** and a new, AI-generated alert file will appear in the **`/alerts`** directory.
