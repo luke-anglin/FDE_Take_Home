@@ -68,13 +68,10 @@ class CreativeGenerator:
             
             response = self.model.generate_content(contents)
             
-            # --- THIS IS THE CRITICAL BUG FIX ---
-            # Check for candidates BEFORE trying to access the list index.
             if not response.candidates:
                 reason = "Unknown"
                 if response.prompt_feedback and response.prompt_feedback.block_reason:
                     reason = response.prompt_feedback.block_reason.name
-                # Raise the specific error that the main loop will catch.
                 raise ContentGenerationError(f"Request blocked by safety filters. Reason: {reason}")
 
             for part in response.candidates[0].content.parts:
@@ -85,7 +82,6 @@ class CreativeGenerator:
             raise ContentGenerationError(f"Model returned text instead of an image: '{text_response}'")
 
         except Exception as e:
-            # Re-raise known errors or wrap unknown ones for consistent handling.
             if isinstance(e, ContentGenerationError):
                 raise
             else:
@@ -107,7 +103,6 @@ class CreativeGenerator:
             for aspect_ratio in self.aspect_ratios:
                 logging.info(f"--- Starting generation for '{product_name}' ({aspect_ratio}) ---")
                 
-                # --- NEW: Wrap individual generation in a try/except block ---
                 try:
                     prompt = self._assemble_all_in_one_prompt(brief, product_name, product_details.description, base_images_data)
                     generated_image = self._generate_image(prompt, aspect_ratio, prepared_base_images)
@@ -122,6 +117,6 @@ class CreativeGenerator:
                 except ContentGenerationError as e:
                     # Log the specific failure and continue to the next image.
                     logging.error(f"Failed to generate creative for '{product_name}' ({aspect_ratio}). Reason: {e}")
-                    continue # This is key to making the system resilient.
+                    continue 
         
         return generated_files

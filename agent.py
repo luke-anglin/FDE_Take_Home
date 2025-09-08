@@ -4,10 +4,8 @@ import json
 from datetime import datetime
 import google.generativeai as genai
 
-# Configure the Gemini API (it will use the same GOOGLE_API_KEY from your .env)
-# We can use a powerful text model for this task.
 try:
-    TEXT_MODEL = genai.GenerativeModel(model_name='gemini-1.5-pro-latest')
+    TEXT_MODEL = genai.GenerativeModel(model_name='gemini-2.5-flash-lite')
 except Exception as e:
     logging.error(f"Could not initialize Gemini text model for Agent: {e}")
     TEXT_MODEL = None
@@ -27,7 +25,6 @@ def _generate_and_save_alert(brief, expected_count, actual_count):
     logging.warning("Issue detected. Triggering AI Alerter...")
     os.makedirs(ALERTS_DIR, exist_ok=True)
 
-    # 1. This is the "Model Context Protocol": A structured JSON object with the facts.
     context = {
         "campaign_name": brief.campaign_name,
         "status": "FLAGGED_INSUFFICIENT_ASSETS",
@@ -41,7 +38,6 @@ def _generate_and_save_alert(brief, expected_count, actual_count):
         "suggested_action": f"Review the campaign log at '{LOGS_DIR}/{brief.campaign_name.replace(' ', '_')}.log' for potential errors."
     }
 
-    # 2. This is the prompt that tells the AI how to act on the context.
     prompt = (
         "You are a production assistant AI for a busy marketing team. "
         "Based on the following structured JSON data report, write a simple, clear, and human-readable email alert. "
@@ -51,11 +47,8 @@ def _generate_and_save_alert(brief, expected_count, actual_count):
     )
 
     try:
-        # 3. The AI is called to perform the "translation" task.
         response = TEXT_MODEL.generate_content(prompt)
         email_content = response.text
-
-        # 4. The AI's output is saved locally.
         safe_campaign_name = brief.campaign_name.replace(' ', '_')
         alert_filepath = os.path.join(ALERTS_DIR, f"ALERT_{safe_campaign_name}.txt")
         with open(alert_filepath, 'w') as f:

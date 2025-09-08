@@ -9,10 +9,6 @@ import base64
 from dotenv import load_dotenv, find_dotenv, set_key
 from typing import Dict, List
 
-# ==============================================================================
-# The DropboxHelper class used by the main application
-# ==============================================================================
-
 class DropboxHelper:
     def __init__(self, app_key, app_secret, refresh_token):
         try:
@@ -54,7 +50,6 @@ class DropboxHelper:
             logging.error(f"An unexpected error during shareable link retrieval for {dropbox_path}: {e}")
             return None
 
-    # --- THIS IS THE NEW, SIMPLIFIED, AND CORRECTED GALLERY FUNCTION ---
     def list_campaign_assets(self) -> dict:
         logging.info("Fetching all campaign assets from Dropbox...")
         campaigns = {}
